@@ -136,3 +136,7 @@
     </div>
 </div>
 @endsection
+
+<script src="{{ asset('js/news.js') }}"></script>
+    
+    @stack('scripts')

@@ -42,3 +42,70 @@ window.onclick = function(event) {
         closeQuickAddModal();
     }
 }
+
+function addFilmToList(filmId) {
+    const form = document.getElementById('addToListForm');
+    const formData = new FormData(form);
+    
+    const data = {
+        status: formData.get('status'),
+        rating: formData.get('rating') || null,
+        personal_notes: formData.get('personal_notes') || null,
+        film_type: 'recommended' 
+    };
+
+    fetch(`/my-lists/film/${filmId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            closeAddToListModal();
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante l\'aggiunta alla lista');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Errore di connessione');
+    });
+}
+
+function removeFromFilmList(filmId) {
+    if (!confirm('Sei sicuro di voler rimuovere questo film dalla tua lista?')) {
+        return;
+    }
+
+    fetch(`/my-lists/film/${filmId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante la rimozione dalla lista');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Errore di connessione');
+    });
+}
