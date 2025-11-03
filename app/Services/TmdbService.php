@@ -18,21 +18,16 @@ class TmdbService
         $this->apiKey = env('TMDB_API_KEY');
     }
 
-    /**
-     * ✅ Helper per creare richieste HTTP con gestione SSL
-     */
+ 
     private function makeRequest($url, $params = [])
     {
-        // ⚠️ SOLO PER SVILUPPO LOCALE
-        // In produzione rimuovi withoutVerifying()
+       
         return Http::withoutVerifying()
             ->timeout(30)
             ->get($url, $params);
     }
 
-    /**
-     * Film popolari (con cache per performance)
-     */
+   
     public function getPopularMovies($page = 1)
     {
         if (empty($this->apiKey)) {
@@ -57,9 +52,7 @@ class TmdbService
         }
     }
 
-    /**
-     * Serie TV popolari
-     */
+  
     public function getPopularTVShows($page = 1)
     {
         if (empty($this->apiKey)) {
@@ -83,9 +76,7 @@ class TmdbService
         }
     }
 
-    /**
-     * Film in tendenza
-     */
+  
     public function getTrendingMovies($timeWindow = 'week', $page = 1)
     {
         if (empty($this->apiKey)) {
@@ -108,9 +99,7 @@ class TmdbService
         }
     }
 
-    /**
-     * Film top rated (per i film consigliati)
-     */
+   
     public function getTopRatedMovies($page = 1)
     {
         if (empty($this->apiKey)) {
