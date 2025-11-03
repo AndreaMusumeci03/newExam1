@@ -15,7 +15,7 @@
                         <span style="font-size: 2rem;">⭐</span>
                         <div>
                             <strong style="font-size: 1.5rem;">{{ $film->imdb_rating }}</strong>
-                            <small style="display: block; color: #999;">/10 IMDb</small>
+                            <small style="display: block; color: #999;">/10 TMDb</small>
                         </div>
                     </div>
                 @endif
@@ -109,19 +109,13 @@
                         @if($film->released)
                             <div class="detail-item">
                                 <strong>📅 Data Uscita:</strong>
-                                <span>{{ $film->released->format('d/m/Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($film->released)->format('d/m/Y') }}</span>
                             </div>
                         @endif
 
                         <div class="detail-item">
-                            <strong>🔗 IMDb ID:</strong>
-                            <span>
-                                <a href="https://www.imdb.com/title/{{ $film->imdb_id }}/" 
-                                   target="_blank" 
-                                   style="color: #e50914; text-decoration: underline;">
-                                    {{ $film->imdb_id }}
-                                </a>
-                            </span>
+                            <strong>🔗 Fonte:</strong>
+                            <span>TMDb (The Movie Database)</span>
                         </div>
                     </div>
                 </div>
@@ -171,5 +165,83 @@
         </form>
     </div>
 </div>
+
+<script>
+function showAddToListModal(filmId) {
+    document.getElementById('addToListModal').style.display = 'flex';
+}
+
+function closeAddToListModal() {
+    document.getElementById('addToListModal').style.display = 'none';
+    document.getElementById('addToListForm').reset();
+}
+
+function addFilmToList(filmId) {
+    const formData = new FormData(document.getElementById('addToListForm'));
+    const data = {
+        status: formData.get('status'),
+        rating: formData.get('rating'),
+        personal_notes: formData.get('personal_notes')
+    };
+    
+    fetch(`/my-lists/film/${filmId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ ' + data.message);
+            location.reload(); // Ricarica per mostrare lo stato aggiornato
+        } else {
+            alert('❌ ' + (data.message || 'Errore'));
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        alert('❌ Errore di connessione');
+    });
+}
+
+function removeFromFilmList(filmId) {
+    if (!confirm('Vuoi davvero rimuovere questo film dalla tua lista?')) {
+        return;
+    }
+    
+    fetch(`/my-lists/film/${filmId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ ' + data.message);
+            location.reload();
+        } else {
+            alert('❌ ' + (data.message || 'Errore'));
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        alert('❌ Errore di connessione');
+    });
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('addToListModal');
+    if (event.target === modal) {
+        closeAddToListModal();
+    }
+}
+</script>
 @endauth
 @endsection

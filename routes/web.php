@@ -51,3 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/my-lists/film/{filmId}', [UserFilmListController::class, 'storeFilm'])->name('my-lists.store-film');
     Route::delete('/my-lists/film/{filmId}', [UserFilmListController::class, 'destroyFilm'])->name('my-lists.destroy-film');
 });
+
+// Route per caricare i dettagli completi dei film in background
+Route::get('/films/load-details', [RecommendedFilmController::class, 'loadFullDetails'])
+    ->name('films.load-details');

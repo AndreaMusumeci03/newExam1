@@ -8,7 +8,7 @@
         <div>
             <h1 class="page-title">🎥 Film Consigliati</h1>
             <p style="color: #999; margin-top: 0.5rem;">
-                I migliori film classici selezionati per te da OMDb • {{ $films->total() }} film disponibili
+                I migliori film selezionati per te da TMDb • {{ $films->total() }} film disponibili • Aggiornati quotidianamente
             </p>
         </div>
     </div>
@@ -88,7 +88,7 @@
             @endforeach
         </div>
 
-        {{-- ✅ PAGINAZIONE CORRETTA CON $films --}}
+        {{-- Paginazione --}}
         <div style="margin-top: 2rem;">
             {{ $films->links('vendor.pagination.custom') }}
         </div>
@@ -96,7 +96,7 @@
     @else
         <div class="empty-state">
             <h2>🎬 Caricamento Film...</h2>
-            <p>I film consigliati verranno caricati automaticamente.</p>
+            <p>I film consigliati verranno caricati automaticamente da TMDb.</p>
             <p style="color: #666; margin-top: 1rem;">
                 Ricarica la pagina tra qualche secondo...
             </p>

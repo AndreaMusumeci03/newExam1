@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Services\TmdbService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class NewsController extends Controller
 {
+    private $tmdbService;
+
+    public function __construct(TmdbService $tmdbService)
+    {
+        $this->tmdbService = $tmdbService;
+    }
+
     // Mostra tutte le news
     public function index()
     {
@@ -39,28 +46,15 @@ class NewsController extends Controller
         return view('news.show', compact('news', 'isFavorite'));
     }
 
-    // Sincronizza le news da TMDb API (SOLO TMDB)
+    // Sincronizza le news da TMDb API
     private function syncNewsFromApi()
     {
-        $apiKey = env('TMDB_API_KEY', '');
-        
-        if (empty($apiKey)) {
-            Log::warning('TMDB_API_KEY non configurato nel file .env');
-            return;
-        }
-
         try {
             // Recupera film popolari
-            $response = Http::withoutVerifying()
-                ->timeout(30)
-                ->get('https://api.themoviedb.org/3/movie/popular', [
-                    'api_key' => $apiKey,
-                    'language' => 'it-IT',
-                    'page' => 1,
-                ]);
-
-            if ($response->successful()) {
-                $movies = $response->json()['results'] ?? [];
+            $moviesData = $this->tmdbService->getPopularMovies(1);
+            
+            if ($moviesData && isset($moviesData['results'])) {
+                $movies = $moviesData['results'];
                 
                 Log::info('Film TMDb recuperati: ' . count($movies));
 
@@ -71,9 +65,7 @@ class NewsController extends Controller
                             'title' => $movie['title'] ?? 'Titolo non disponibile',
                             'description' => $movie['overview'] ?? 'Descrizione non disponibile',
                             'content' => $movie['overview'] ?? 'Contenuto non disponibile',
-                            'image_url' => isset($movie['poster_path']) 
-                                ? 'https://image.tmdb.org/t/p/w500' . $movie['poster_path']
-                                : null,
+                            'image_url' => $this->tmdbService->getImageUrl($movie['poster_path'] ?? null),
                             'source' => 'TMDb - Film',
                             'published_at' => isset($movie['release_date']) && !empty($movie['release_date'])
                                 ? $movie['release_date'] 
@@ -84,16 +76,10 @@ class NewsController extends Controller
             }
 
             // Recupera serie TV popolari
-            $response = Http::withoutVerifying()
-                ->timeout(30)
-                ->get('https://api.themoviedb.org/3/tv/popular', [
-                    'api_key' => $apiKey,
-                    'language' => 'it-IT',
-                    'page' => 1,
-                ]);
-
-            if ($response->successful()) {
-                $shows = $response->json()['results'] ?? [];
+            $tvData = $this->tmdbService->getPopularTVShows(1);
+            
+            if ($tvData && isset($tvData['results'])) {
+                $shows = $tvData['results'];
                 
                 Log::info('Serie TV TMDb recuperate: ' . count($shows));
 
@@ -104,9 +90,7 @@ class NewsController extends Controller
                             'title' => $show['name'] ?? 'Titolo non disponibile',
                             'description' => $show['overview'] ?? 'Descrizione non disponibile',
                             'content' => $show['overview'] ?? 'Contenuto non disponibile',
-                            'image_url' => isset($show['poster_path']) 
-                                ? 'https://image.tmdb.org/t/p/w500' . $show['poster_path']
-                                : null,
+                            'image_url' => $this->tmdbService->getImageUrl($show['poster_path'] ?? null),
                             'source' => 'TMDb - Serie TV',
                             'published_at' => isset($show['first_air_date']) && !empty($show['first_air_date'])
                                 ? $show['first_air_date'] 
