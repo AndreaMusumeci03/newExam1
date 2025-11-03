@@ -150,17 +150,14 @@ class RecommendedFilmController extends Controller
             $updatedCount = 0;
             
             foreach ($films as $film) {
-                // Estrai l'ID TMDb dall'imdb_id
                 $tmdbId = str_replace('tmdb_', '', $film->imdb_id);
                 
-                // Ottieni i dettagli completi
                 $details = $this->tmdbService->getMovieDetails($tmdbId);
                 
                 if (!$details) {
                     continue;
                 }
 
-                // Estrai il regista
                 $director = null;
                 if (isset($details['credits']['crew'])) {
                     foreach ($details['credits']['crew'] as $crew) {
@@ -171,20 +168,18 @@ class RecommendedFilmController extends Controller
                     }
                 }
 
-                // Estrai gli attori
                 $actors = null;
                 if (isset($details['credits']['cast'])) {
                     $cast = array_slice($details['credits']['cast'], 0, 5);
                     $actors = implode(', ', array_column($cast, 'name'));
                 }
 
-                // Estrai i generi
                 $genres = null;
                 if (isset($details['genres']) && !empty($details['genres'])) {
                     $genres = implode(', ', array_column($details['genres'], 'name'));
                 }
 
-                // Aggiorna il film
+           
                 $film->update([
                     'director' => $director,
                     'actors' => $actors,

@@ -18,12 +18,10 @@ class FavoriteController extends Controller
         return view('favorites.index', compact('favorites'));
     }
 
-    // Aggiungi ai preferiti
     public function store(Request $request, $newsId)
     {
         $news = News::findOrFail($newsId);
 
-        // Controlla se non è già nei preferiti
         if (!auth()->user()->favoriteNews()->where('news_id', $newsId)->exists()) {
             Favorite::create([
                 'user_id' => auth()->id(),
@@ -50,7 +48,6 @@ class FavoriteController extends Controller
         return back()->with('info', 'Già presente nei preferiti!');
     }
 
-    // Rimuovi dai preferiti
     public function destroy(Request $request, $newsId)
     {
         auth()->user()->favoriteNews()->detach($newsId);

@@ -29,12 +29,10 @@ class CommentController extends Controller
         return redirect()->route('news.show', $newsId)->with('success', 'Commento aggiunto!');
     }
 
-    // Elimina un commento
     public function destroy(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
 
-        // Controlla che l'utente sia il proprietario del commento
         if ($comment->user_id !== auth()->id()) {
             if ($request->expectsJson()) {
                 return response()->json([

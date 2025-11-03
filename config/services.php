@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+  'tmdb' => [
+        'token'  => env('TMDB_TOKEN'),
+        'lang'   => env('TMDB_LANG', 'it-IT'),
+        // Se specificato, path al cacert.pem per cURL (Windows/XAMPP)
+        'ca'     => env('TMDB_CA_PATH', null),
+        // Fallback booleano per abilitare/disabilitare la verifica SSL
+        // Imposta TMDB_VERIFY_SSL=false SOLO in locale per debug.
+        'verify' => env('TMDB_VERIFY_SSL', true),
+    ],
 ];

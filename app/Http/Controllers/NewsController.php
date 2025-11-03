@@ -16,19 +16,15 @@ class NewsController extends Controller
         $this->tmdbService = $tmdbService;
     }
 
-    // Mostra tutte le news
     public function index()
     {
-        // Sincronizza le news dall'API esterna
         $this->syncNewsFromApi();
 
-        // Recupera tutte le news dal database
         $news = News::orderBy('published_at', 'desc')->paginate(12);
 
         return view('news.index', compact('news'));
     }
 
-    // Mostra una singola news
     public function show($id)
     {
         $news = News::with(['comments.user'])->find($id);
@@ -37,7 +33,6 @@ class NewsController extends Controller
             return redirect()->route('news.index')->with('error', 'Notizia non trovata!');
         }
         
-        // Controlla se l'utente ha già aggiunto ai preferiti
         $isFavorite = false;
         if (auth()->check()) {
             $isFavorite = auth()->user()->favoriteNews()->where('news_id', $id)->exists();
@@ -46,11 +41,9 @@ class NewsController extends Controller
         return view('news.show', compact('news', 'isFavorite'));
     }
 
-    // Sincronizza le news da TMDb API
     private function syncNewsFromApi()
     {
         try {
-            // Recupera film popolari
             $moviesData = $this->tmdbService->getPopularMovies(1);
             
             if ($moviesData && isset($moviesData['results'])) {
@@ -75,7 +68,6 @@ class NewsController extends Controller
                 }
             }
 
-            // Recupera serie TV popolari
             $tvData = $this->tmdbService->getPopularTVShows(1);
             
             if ($tvData && isset($tvData['results'])) {

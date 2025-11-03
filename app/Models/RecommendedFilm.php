@@ -10,7 +10,7 @@ class RecommendedFilm extends Model
     use HasFactory;
 
     protected $fillable = [
-        'imdb_id',        // ✅ AGGIUNTO
+        'imdb_id',        
         'title',
         'year',
         'plot',
