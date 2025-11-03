@@ -14,44 +14,40 @@ class CommentController extends Controller
         ]);
 
         Comment::create([
-            'user_id' => auth()->id(),
+            'user_id' => $request->user()->id,
             'news_id' => $newsId,
             'content' => $request->content,
         ]);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Commento aggiunto!'
-            ]);
-        }
-
-        return redirect()->route('news.show', $newsId)->with('success', 'Commento aggiunto!');
+        return $this->respond($request, 'Commento aggiunto!', route('news.show', $newsId));
     }
 
     public function destroy(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
 
-        if ($comment->user_id !== auth()->id()) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Non autorizzato'
-                ], 403);
-            }
-            abort(403);
+        if ($comment->user_id !== $request->user()->id) {
+            return $this->respond($request, 'Non autorizzato', back()->getTargetUrl(), 403, false);
         }
 
         $comment->delete();
 
+        return $this->respond($request, 'Commento eliminato!');
+    }
+
+    private function respond(Request $request, string $message, ?string $redirectTo = null, int $status = 200, bool $success = true)
+    {
         if ($request->expectsJson()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Commento eliminato!'
-            ]);
+                'success' => $success,
+                'message' => $message
+            ], $status);
         }
 
-        return back()->with('success', 'Commento eliminato!');
+        if ($redirectTo) {
+            return redirect($redirectTo)->with($success ? 'success' : 'error', $message);
+        }
+
+        return back()->with($success ? 'success' : 'error', $message);
     }
 }

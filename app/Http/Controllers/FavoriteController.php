@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Favorite;
 use App\Models\News;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    
     public function index()
     {
         $favorites = auth()->user()->favoriteNews()
@@ -20,45 +18,36 @@ class FavoriteController extends Controller
 
     public function store(Request $request, $newsId)
     {
-        $news = News::findOrFail($newsId);
+        News::findOrFail($newsId);
 
-        if (!auth()->user()->favoriteNews()->where('news_id', $newsId)->exists()) {
-            Favorite::create([
-                'user_id' => auth()->id(),
-                'news_id' => $newsId,
-            ]);
+        $result = auth()->user()->favoriteNews()->syncWithoutDetaching([$newsId]);
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Aggiunto ai preferiti!'
-                ]);
-            }
+        $added = !empty($result['attached']);
+        $message = $added ? 'Aggiunto ai preferiti!' : 'Già presente nei preferiti!';
 
-            return back()->with('success', 'Aggiunto ai preferiti!');
-        }
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Già presente nei preferiti!'
-            ]);
-        }
-
-        return back()->with('info', 'Già presente nei preferiti!');
+        return $this->respond($request, $message, success: $added);
     }
 
     public function destroy(Request $request, $newsId)
     {
         auth()->user()->favoriteNews()->detach($newsId);
 
+        return $this->respond($request, 'Rimosso dai preferiti!');
+    }
+
+    private function respond(Request $request, string $message, ?string $redirectTo = null, int $status = 200, bool $success = true)
+    {
         if ($request->expectsJson()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Rimosso dai preferiti!'
-            ]);
+                'success' => $success,
+                'message' => $message
+            ], $status);
         }
 
-        return back()->with('success', 'Rimosso dai preferiti!');
+        if ($redirectTo) {
+            return redirect($redirectTo)->with($success ? 'success' : 'info', $message);
+        }
+
+        return back()->with($success ? 'success' : 'info', $message);
     }
 }

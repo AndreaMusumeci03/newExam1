@@ -7,7 +7,6 @@ function getCsrfToken() {
     }
     return token.getAttribute('content');
 }
-// Aggiungi ai preferiti (Fetch Sincrona)
 function addToFavorites(newsId) {
     const button = event.target;
     const csrfToken = getCsrfToken();
@@ -17,7 +16,6 @@ function addToFavorites(newsId) {
         return;
     }
     
-    // Disabilita il bottone durante la richiesta
     button.disabled = true;
     
     fetch(`/favorites/${newsId}`, {
@@ -38,7 +36,6 @@ function addToFavorites(newsId) {
     })
     .then(data => {
         if (data.success) {
-            // Aggiorna solo il testo e le classi del bottone in modo sicuro
             button.textContent = '💔 Rimuovi dai Preferiti';
             button.classList.remove('btn-success');
             button.classList.add('btn-danger');
@@ -58,7 +55,6 @@ function addToFavorites(newsId) {
     });
 }
 
-// Rimuovi dai preferiti (Fetch Sincrona)
 function removeFromFavorites(newsId) {
     const button = event.target;
     const csrfToken = getCsrfToken();
@@ -88,7 +84,6 @@ function removeFromFavorites(newsId) {
     })
     .then(data => {
         if (data.success) {
-            // Aggiorna solo il testo e le classi del bottone in modo sicuro
             button.textContent = '❤️ Aggiungi ai Preferiti';
             button.classList.remove('btn-danger');
             button.classList.add('btn-success');
@@ -108,7 +103,6 @@ function removeFromFavorites(newsId) {
     });
 }
 
-// Aggiungi commento con fetch
 function submitComment(newsId) {
     event.preventDefault();
     
@@ -149,9 +143,7 @@ function submitComment(newsId) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message || 'Commento aggiunto!');
-            // Pulisci il textarea
             textarea.value = '';
-            // Ricarica la pagina dopo 1 secondo per mostrare il nuovo commento
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
@@ -168,7 +160,6 @@ function submitComment(newsId) {
     });
 }
 
-// Elimina commento
 function deleteComment(commentId) {
     if (!confirm('Sei sicuro di voler eliminare questo commento?')) {
         return;
@@ -200,7 +191,6 @@ function deleteComment(commentId) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message || 'Commento eliminato!');
-            // Ricarica la pagina dopo 1 secondo
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
@@ -214,7 +204,6 @@ function deleteComment(commentId) {
     });
 }
 
-// Logout sicuro
 function logout() {
     event.preventDefault();
     
@@ -254,7 +243,6 @@ function logout() {
     });
 }
 
-// Mostra alert dinamico in modo SICURO (senza innerHTML)
 function showAlert(type, message) {
     const alertsContainer = document.getElementById('alerts-container');
     if (!alertsContainer) {
@@ -262,16 +250,13 @@ function showAlert(type, message) {
         return;
     }
     
-    // Crea l'elemento alert in modo sicuro
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
     
-    // Usa textContent invece di innerHTML per sicurezza
     alert.textContent = message;
     
     alertsContainer.appendChild(alert);
     
-    // Rimuovi dopo 5 secondi
     setTimeout(() => {
         alert.style.transition = 'opacity 0.3s';
         alert.style.opacity = '0';
@@ -283,7 +268,6 @@ function showAlert(type, message) {
     }, 5000);
 }
 
-// Auto-nascondi gli alert esistenti dopo 5 secondi
 document.addEventListener('DOMContentLoaded', function() {
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
@@ -299,7 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Validazione form registrazione lato client
 function validateRegistrationForm() {
     event.preventDefault();
     
@@ -307,42 +290,35 @@ function validateRegistrationForm() {
     const password = form.querySelector('#password').value;
     const passwordConfirm = form.querySelector('#password_confirmation').value;
     
-    // Controlla lunghezza minima
     if (password.length < 8) {
         showAlert('error', 'La password deve contenere almeno 8 caratteri.');
         return false;
     }
     
-    // Controlla maiuscola
     if (!/[A-Z]/.test(password)) {
         showAlert('error', 'La password deve contenere almeno una lettera maiuscola.');
         return false;
     }
     
-    // Controlla carattere speciale
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
         showAlert('error', 'La password deve contenere almeno un carattere speciale.');
         return false;
     }
     
-    // Controlla numero
     if (!/[0-9]/.test(password)) {
         showAlert('error', 'La password deve contenere almeno un numero.');
         return false;
     }
     
-    // Controlla conferma password
     if (password !== passwordConfirm) {
         showAlert('error', 'Le password non coincidono.');
         return false;
     }
     
-    // Se tutto ok, invia il form
     form.submit();
     return true;
 }
 
-// Sanitizza input per prevenire XSS (utility)
 function sanitizeInput(input) {
     const div = document.createElement('div');
     div.textContent = input;
@@ -384,7 +360,6 @@ function addToList(newsId) {
     });
 }
 
-// Rimuovi dalla lista
 function removeFromList(newsId) {
     if (!confirm('Sei sicuro di voler rimuovere questo film dalla tua lista?')) {
         return;
@@ -414,11 +389,6 @@ function removeFromList(newsId) {
     });
 }
 
-// Aggiungi alla fine del file
-
-// ✅ FUNZIONI PER I FILM CONSIGLIATI
-
-// Mostra modal per aggiungere alla lista
 function showAddToListModal(filmId) {
     const modal = document.getElementById('addToListModal');
     if (modal) {
@@ -426,7 +396,6 @@ function showAddToListModal(filmId) {
     }
 }
 
-// Chiudi modal
 function closeAddToListModal() {
     const modal = document.getElementById('addToListModal');
     if (modal) {
@@ -435,7 +404,6 @@ function closeAddToListModal() {
     }
 }
 
-// Chiudi modal cliccando fuori
 window.onclick = function(event) {
     const modal = document.getElementById('addToListModal');
     if (event.target === modal) {
@@ -443,7 +411,6 @@ window.onclick = function(event) {
     }
 }
 
-// Aggiungi film alla lista
 function addFilmToList(filmId) {
     const form = document.getElementById('addToListForm');
     const formData = new FormData(form);
@@ -452,7 +419,7 @@ function addFilmToList(filmId) {
         status: formData.get('status'),
         rating: formData.get('rating') || null,
         personal_notes: formData.get('personal_notes') || null,
-        film_type: 'recommended' // Indica che è un film consigliato
+        film_type: 'recommended' 
     };
 
     fetch(`/my-lists/film/${filmId}`, {
@@ -482,7 +449,6 @@ function addFilmToList(filmId) {
     });
 }
 
-// Rimuovi film dalla lista
 function removeFromFilmList(filmId) {
     if (!confirm('Sei sicuro di voler rimuovere questo film dalla tua lista?')) {
         return;

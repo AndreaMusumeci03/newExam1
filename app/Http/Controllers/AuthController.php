@@ -10,7 +10,6 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    
     public function showRegister()
     {
         return view('auth.register');
@@ -24,35 +23,18 @@ class AuthController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:8',
                 'confirmed',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
+                // La regola Password gestisce già lettere, maiuscole, numeri e simboli
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
             ],
         ], [
             'name.required' => 'Il nome è obbligatorio.',
-            'email.required' => 'L\'email è obbligatoria.',
-            'email.email' => 'L\'email deve essere valida.',
+            'email.required' => "L'email è obbligatoria.",
+            'email.email' => "L'email deve essere valida.",
             'email.unique' => 'Questa email è già registrata.',
             'password.required' => 'La password è obbligatoria.',
-            'password.min' => 'La password deve contenere almeno 8 caratteri.',
             'password.confirmed' => 'Le password non coincidono.',
         ]);
-
-        if (!preg_match('/[A-Z]/', $request->password)) {
-            return back()->withErrors([
-                'password' => 'La password deve contenere almeno una lettera maiuscola.'
-            ])->withInput();
-        }
-
-        if (!preg_match('/[!@#$%^&*(),.?":{}|<>]/', $request->password)) {
-            return back()->withErrors([
-                'password' => 'La password deve contenere almeno un carattere speciale (!@#$%^&*...).'
-            ])->withInput();
-        }
 
         $user = User::create([
             'name' => $request->name,
@@ -76,8 +58,8 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ], [
-            'email.required' => 'L\'email è obbligatoria.',
-            'email.email' => 'L\'email deve essere valida.',
+            'email.required' => "L'email è obbligatoria.",
+            'email.email' => "L'email deve essere valida.",
             'password.required' => 'La password è obbligatoria.',
         ]);
 

@@ -132,6 +132,10 @@
     </div>
 </div>
 
+<script src="{{ asset('js/reccomended.js') }}"></script>
+    
+    @stack('scripts')
+
 <script>
 function showAddToListModal(filmId) {
     document.getElementById('quickAddFilmId').value = filmId;

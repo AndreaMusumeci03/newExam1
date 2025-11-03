@@ -9,36 +9,27 @@ class TmdbService
     protected string $base = 'https://api.themoviedb.org/3';
     protected string $token;
     protected string $lang;
-    protected $verify; // string (path) | bool | null
 
     public function __construct()
     {
-        $this->token = (string) config('services.tmdb.token');
+        $this->token = (string) config('services.tmdb.token');      
         $this->lang  = (string) config('services.tmdb.lang', 'it-IT');
-
-        // Se impostato un path CA, usalo. Altrimenti usa il flag booleano verify.
-        $caPath = config('services.tmdb.ca');           // es. E:\xampp\php\extras\ssl\cacert.pem
-        $verify = config('services.tmdb.verify', false); // true|false
-
-        $this->verify = $caPath ?: $verify;
     }
 
     protected function request()
     {
-        $options = [];
-        if ($this->verify !== null) {
-            $options['verify'] = $this->verify;
-        }
-
-        return Http::withoutOptions($options)
-            ->withToken($this->token)
-            ->acceptJson();
+        return Http::withOptions(['verify' => false])->acceptJson();
     }
 
     protected function get(string $path, array $params = []): array
     {
+        $query = array_merge([
+            'api_key'  => $this->token,
+            'language' => $this->lang,
+        ], $params);
+
         $response = $this->request()
-            ->get($this->base . $path, array_merge(['language' => $this->lang], $params))
+            ->get($this->base . $path, $query)
             ->throw();
 
         return $response->json() ?? [];
