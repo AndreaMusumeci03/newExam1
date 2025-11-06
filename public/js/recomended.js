@@ -1,3 +1,13 @@
+
+function getCsrfToken() {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    if (!token) {
+        console.error('CSRF token not found');
+        return null;
+    }
+    return token.getAttribute('content');
+}
+
 function showAddToListModal(filmId) {
     document.getElementById('quickAddFilmId').value = filmId;
     document.getElementById('quickAddModal').style.display = 'flex';

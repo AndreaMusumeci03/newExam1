@@ -1,4 +1,12 @@
 
+function getCsrfToken() {
+    const token = document.querySelector('meta[name="csrf-token"]');
+    if (!token) {
+        console.error('CSRF token not found');
+        return null;
+    }
+    return token.getAttribute('content');
+}
 
 function addToList(newsId) {
     const form = event.target;
@@ -148,6 +156,9 @@ function removeFromFavorites(newsId) {
             button.setAttribute('onclick', `addToFavorites(${newsId})`);
             
             showAlert('success', data.message || 'Rimosso dai preferiti!');
+            setTimeout(() => {
+                location.reload();
+            }, 1);
         } else {
             throw new Error(data.message || 'Operazione fallita');
         }

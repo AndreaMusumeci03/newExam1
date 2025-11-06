@@ -24,7 +24,6 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'confirmed',
-                // La regola Password gestisce già lettere, maiuscole, numeri e simboli
                 Password::min(8)->letters()->mixedCase()->numbers()->symbols(),
             ],
         ], [
