@@ -77,33 +77,9 @@
 
 {{-- Modal Veloce per Aggiungere alla Lista --}}
 @auth
-<div id="quickAddModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>📋 Aggiungi alla Lista</h3>
-            <button onclick="closeQuickAddModal()" class="modal-close">&times;</button>
-        </div>
-        <form id="quickAddForm" onsubmit="quickAddToList(); return false;">
-            @csrf
-            <input type="hidden" id="quickAddItemId" value="">
-            <div class="form-group">
-                <label for="quick_status">Stato</label>
-                <select name="status" id="quick_status" class="form-control" required>
-                    <option value="plan_to_watch">📋 Da Vedere</option>
-                    <option value="watching">▶️ Sto Guardando</option>
-                    <option value="completed">✅ Completato</option>
-                    <option value="dropped">❌ Abbandonato</option>
-                </select>
-            </div>
-            <div class="modal-actions">
-                <button type="submit" class="btn btn-primary">Aggiungi</button>
-                <button type="button" onclick="closeQuickAddModal()" class="btn btn-secondary">Annulla</button>
-            </div>
-        </form>
-    </div>
-</div>
-
+@include('components.modal',['film' =>$news])
 <script src="{{ asset('js/news.js') }}"></script>
+<script src="{{ asset('js/recommended-film-modal.js') }}"></script>
     
     @stack('scripts')
 
