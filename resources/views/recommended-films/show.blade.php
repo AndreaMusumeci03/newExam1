@@ -21,8 +21,7 @@
                 @endif
 
                 <div class="film-info">
-                    @if($film->rated)
-                        <span class="info-badge">{{ $film->rated }}</span>
+                    @if($film->rated && !in_array($film->rated, ['T','N/A'])) <span class="info-badge">{{ $film->rated }}</span> 
                     @endif
                     @if($film->runtime)
                         <span class="info-badge">⏱️ {{ $film->runtime }}</span>
@@ -140,3 +139,4 @@
 
 @endauth
 @endsection
+

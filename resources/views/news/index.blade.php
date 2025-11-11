@@ -77,7 +77,7 @@
 
 {{-- Modal Veloce per Aggiungere alla Lista --}}
 @auth
-@include('components.modal',['film' =>$news])
+@include ('components.modal',['film' =>$item])
 <script src="{{ asset('js/news.js') }}"></script>
 <script src="{{ asset('js/recommended-film-modal.js') }}"></script>
     

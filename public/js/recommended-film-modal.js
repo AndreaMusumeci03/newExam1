@@ -29,7 +29,7 @@ function addFilmToList(filmId) {
     .then(data => {
         if (data.success) {
             alert('✅ ' + data.message);
-            location.reload(); // Ricarica per mostrare lo stato aggiornato
+            location.reload(); 
         } else {
             alert('❌ ' + (data.message || 'Errore'));
         }

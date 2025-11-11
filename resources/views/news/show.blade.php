@@ -120,7 +120,7 @@
                             <button 
                                 onclick="deleteComment({{ $comment->id }})" 
                                 class="btn btn-danger"
-                                style="padding: 0.4rem 0.8rem; font-size: 0.9rem;"
+                                style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left:21vw;"
                             >
                                 🗑️ Elimina
                             </button>

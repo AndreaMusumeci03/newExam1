@@ -12,42 +12,54 @@
     </div>
 
     {{-- Statistiche --}}
-    <div class="stats-grid">
+    <div class="stat-grid">
+        {{-- Da Vedere --}}
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['plan_to_watch'] }}</div>
-            <div class="stat-label">📋 Da Vedere</div>
+            <div class="stat-left">
+                <div class="stat-number">{{ $stats['plan_to_watch'] }}</div>
+                <div class="stat-label">📋 Da Vedere</div>
+            </div>
             @if($stats['plan_to_watch'] > 0)
-                <a href="{{ route('my-lists.show', 'plan_to_watch') }}" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                <a href="{{ route('my-lists.show', 'plan_to_watch') }}" class="btn btn-sm btn-primary stat-btn">
                     Vedi Lista
                 </a>
             @endif
         </div>
 
+        {{-- Sto Guardando --}}
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['watching'] }}</div>
-            <div class="stat-label">▶️ Sto Guardando</div>
+            <div class="stat-left">
+                <div class="stat-number">{{ $stats['watching'] }}</div>
+                <div class="stat-label">▶️ Sto Guardando</div>
+            </div>
             @if($stats['watching'] > 0)
-                <a href="{{ route('my-lists.show', 'watching') }}" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                <a href="{{ route('my-lists.show', 'watching') }}" class="btn btn-sm btn-primary stat-btn">
                     Vedi Lista
                 </a>
             @endif
         </div>
 
+        {{-- Completati --}}
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['completed'] }}</div>
-            <div class="stat-label">✅ Completati</div>
+            <div class="stat-left">
+                <div class="stat-number">{{ $stats['completed'] }}</div>
+                <div class="stat-label">✅ Completati</div>
+            </div>
             @if($stats['completed'] > 0)
-                <a href="{{ route('my-lists.show', 'completed') }}" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                <a href="{{ route('my-lists.show', 'completed') }}" class="btn btn-sm btn-primary stat-btn">
                     Vedi Lista
                 </a>
             @endif
         </div>
 
+        {{-- Abbandonati --}}
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['dropped'] }}</div>
-            <div class="stat-label">❌ Abbandonati</div>
+            <div class="stat-left">
+                <div class="stat-number">{{ $stats['dropped'] }}</div>
+                <div class="stat-label">❌ Abbandonati</div>
+            </div>
             @if($stats['dropped'] > 0)
-                <a href="{{ route('my-lists.show', 'dropped') }}" class="btn btn-sm btn-primary" style="margin-top: 1rem;">
+                <a href="{{ route('my-lists.show', 'dropped') }}" class="btn btn-sm btn-primary stat-btn">
                     Vedi Lista
                 </a>
             @endif
@@ -56,7 +68,7 @@
 
     {{-- Lista Completa --}}
     @if($allItems->count() > 0)
-        <h2 style="color: #e50914; margin-bottom: 1.5rem;">📚 Tutti i Film e Serie</h2>
+        <h2 style="color: #e50914; margin: 2rem 0 1.5rem;">📚 Tutti i Film e Serie</h2>
         <div class="news-grid">
             @foreach($allItems as $item)
                 @include('my-lists.partials.list-card', ['item' => $item])
@@ -66,7 +78,7 @@
         <div class="empty-state">
             <h2>📋 Nessun Film nella Lista</h2>
             <p>Inizia ad aggiungere film e serie TV alle tue liste!</p>
-            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                 <a href="{{ route('news.index') }}" class="btn btn-primary">
                     🎬 Esplora Film e Serie
                 </a>
