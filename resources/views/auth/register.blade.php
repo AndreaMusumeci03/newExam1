@@ -7,7 +7,7 @@
     <div class="form-container">
         <h2>📝 Registrazione</h2>
 
-        <form method="POST" action="{{ route('register') }}" onsubmit="validateRegistrationForm(event)">
+        <form id="register-form" method="POST" action="{{ route('register') }}">
             @csrf
 
             <div class="form-group">

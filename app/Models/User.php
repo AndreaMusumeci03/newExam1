@@ -29,7 +29,6 @@ class User extends Authenticatable
         ];
     }
 
-    // Relazioni
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -45,7 +44,6 @@ class User extends Authenticatable
         return $this->belongsToMany(News::class, 'favorites')->withTimestamps();
     }
 
-    // ✅ NUOVE RELAZIONI PER LE LISTE
     public function filmLists()
     {
         return $this->hasMany(UserFilmList::class);

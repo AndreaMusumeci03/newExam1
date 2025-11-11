@@ -29,7 +29,6 @@ class RecommendedFilm extends Model
         'imdb_rating' => 'decimal:1',
     ];
 
-    // Relazioni con le liste utente
     public function userLists()
     {
         return $this->hasMany(UserFilmList::class, 'recommended_film_id');

@@ -107,7 +107,6 @@
 {{-- Modal Veloce per Aggiungere alla Lista --}}
 @auth
 @include('components.modal')
-<script src="{{ asset('js/recommended.js') }}"></script>
 <script src="{{ asset('js/recommended-film-modal.js') }}"></script>
     
     @stack('scripts')

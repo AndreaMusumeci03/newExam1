@@ -2,7 +2,7 @@
 <div id="addToListModal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>📋 Aggiungi "{{ $film->title }}" alla Tua Lista</h3>
+            <h3>📋 Aggiungi "{{ $film->title}}" alla Tua Lista</h3>
             <button onclick="closeAddToListModal()" class="modal-close">&times;</button>
         </div>
         <form id="addToListForm" onsubmit="addFilmToList({{ $film->id }}); return false;">

@@ -9,44 +9,6 @@ function getCsrfToken() {
 }
 
 
-function logout() {
-    event.preventDefault();
-    
-    const csrfToken = getCsrfToken();
-    
-    if (!csrfToken) {
-        showAlert('error', 'Errore di sicurezza. Ricarica la pagina.');
-        return;
-    }
-    
-    fetch('/logout', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({})
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Errore nella richiesta');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            window.location.href = '/';
-        } else {
-            throw new Error(data.message || 'Logout fallito');
-        }
-    })
-    .catch(error => {
-        console.error('Logout error:', error);
-        showAlert('error', 'Errore durante il logout. Riprova.');
-    });
-}
 
 function showAlert(type, message) {
     const alertsContainer = document.getElementById('alerts-container');
@@ -88,46 +50,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function validateRegistrationForm() {
-    event.preventDefault();
-    
-    const form = event.target;
-    const password = form.querySelector('#password').value;
-    const passwordConfirm = form.querySelector('#password_confirmation').value;
-    
-    if (password.length < 8) {
-        showAlert('error', 'La password deve contenere almeno 8 caratteri.');
-        return false;
-    }
-    
-    if (!/[A-Z]/.test(password)) {
-        showAlert('error', 'La password deve contenere almeno una lettera maiuscola.');
-        return false;
-    }
-    
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-        showAlert('error', 'La password deve contenere almeno un carattere speciale.');
-        return false;
-    }
-    
-    if (!/[0-9]/.test(password)) {
-        showAlert('error', 'La password deve contenere almeno un numero.');
-        return false;
-    }
-    
-    if (password !== passwordConfirm) {
-        showAlert('error', 'Le password non coincidono.');
-        return false;
-    }
-    
-    form.submit();
-    return true;
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const registerForm = document.querySelector('#register-form'); 
+  if (registerForm) {
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
 
-function sanitizeInput(input) {
-    const div = document.createElement('div');
-    div.textContent = input;
-    return div.textContent;
-}
+      const pw = registerForm.querySelector('#password')?.value || '';
+      const pc = registerForm.querySelector('#password_confirmation')?.value || '';
 
+      const fail = (msg) => { showAlert('error', msg); };
 
+      if (pw.length < 8) { e.preventDefault(); fail('La password deve contenere almeno 8 caratteri.'); return; }
+      if (!/[A-Z]/.test(pw)) { e.preventDefault(); fail('La password deve contenere almeno una lettera maiuscola.'); return; }
+      if (!/[0-9]/.test(pw)) { e.preventDefault(); fail('La password deve contenere almeno un numero.'); return; }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(pw)) { e.preventDefault(); fail('La password deve contenere almeno un carattere speciale.'); return; }
+      if (pw !== pc) { e.preventDefault(); fail('Le password non coincidono.'); return; }
+
+      registerForm.submit();
+    });
+  }
+});

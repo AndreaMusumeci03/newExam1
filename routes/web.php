@@ -23,7 +23,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
 
-// Film Consigliati (SENZA refresh)
+// Film Consigliati 
 Route::get('/recommended-films', [RecommendedFilmController::class, 'index'])->name('recommended-films.index');
 Route::get('/recommended-films/{id}', [RecommendedFilmController::class, 'show'])->name('recommended-films.show');
 

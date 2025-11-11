@@ -9,7 +9,6 @@
     </div>
 
     @if($news->count() > 0)
-        {{-- ✅ USA: news-grid e news-card --}}
         <div class="news-grid">
             @foreach($news as $item)
                 <div class="news-card">
@@ -75,7 +74,6 @@
     @endif
 </div>
 
-{{-- Modal Veloce per Aggiungere alla Lista --}}
 @auth
 @include ('components.modal',['film' =>$item])
 <script src="{{ asset('js/news.js') }}"></script>
