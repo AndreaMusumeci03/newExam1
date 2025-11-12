@@ -1,9 +1,10 @@
-<div class="news-card">
+<div class="news-card" data-item-card>
     @php
         $film = $item->getFilm();
         $imageUrl = $item->getImageUrl();
         $filmId = $item->news_id ?? $item->recommended_film_id;
         $routeName = $item->news_id ? 'news.show' : 'recommended-films.show';
+        $type = $item->news_id ? 'news' : 'film';
     @endphp
 
     {{-- Immagine --}}
@@ -44,7 +45,10 @@
                 📖 Dettagli
             </a>
             <button 
-                onclick="removeFromList({{ $filmId }}, '{{ $item->news_id ? 'news' : 'film' }}')" 
+                data-remove-id="{{ $filmId }}"
+                data-remove-type="{{ $type }}"
+                data-remove-url-base="/my-lists"
+                onclick="removeFromList({{ $filmId }}, '{{ $type }}', this)" 
                 class="btn btn-danger btn-sm"
             >
                 🗑️ Rimuovi

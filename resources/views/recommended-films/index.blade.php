@@ -17,7 +17,7 @@
         {{-- Grid di Card --}}
         <div class="news-grid">
             @foreach($films as $film)
-                <div class="film-card">
+                <div class="film-card" data-item-card>
                     {{-- Poster --}}
                     <a href="{{ route('recommended-films.show', $film->id) }}" class="card-image-link">
                         @if($film->poster_url)
@@ -76,7 +76,7 @@
                             
                             @auth
                                 <button 
-                                    onclick="showAddToListModal({{ $film->id }})" 
+                                    onclick="showAddToListModal({{ $film->id }}, @json($film->title), 'film')" 
                                     class="btn btn-secondary btn-sm"
                                 >
                                     📋 Lista
@@ -108,9 +108,6 @@
 @auth
 @include('components.modal')
 <script src="{{ asset('js/recommended-film-modal.js') }}"></script>
-    
-    @stack('scripts')
-
-
+@stack('scripts')
 @endauth
 @endsection

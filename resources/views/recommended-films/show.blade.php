@@ -62,7 +62,7 @@
                             </button>
                         @else
                             <button 
-                                onclick="showAddToListModal({{ $film->id }})" 
+                                onclick="showAddToListModal({{ $film->id }}, @json($film->title), 'film')" 
                                 class="btn btn-primary btn-block"
                             >
                                 📋 Aggiungi alla Lista
@@ -132,11 +132,7 @@
 
 {{-- Modal per Aggiungere alla Lista --}}
 @auth
-
-
 @include('components.modal')
 <script src="{{ asset('js/recommended-film-modal.js') }}"></script>
-
 @endauth
 @endsection
-

@@ -11,7 +11,7 @@
     @if($news->count() > 0)
         <div class="news-grid">
             @foreach($news as $item)
-                <div class="news-card">
+                <div class="news-card" data-item-card>
                     {{-- Immagine --}}
                     <a href="{{ route('news.show', $item->id) }}" class="card-image-link">
                         @if($item->image_url)
@@ -51,7 +51,7 @@
                             </a>
                             @auth
                                 <button 
-                                    onclick="showAddToListModal({{ $item->id }})" 
+                                    onclick="showAddToListModal({{ $item->id }}, @json($item->title), 'news')" 
                                     class="btn btn-secondary btn-sm"
                                 >
                                     📋 Lista
@@ -64,9 +64,10 @@
         </div>
 
        {{-- Paginazione --}}
-<div style="margin-top: 2rem;">
-    {{ $news->links('vendor.pagination.custom') }}
-</div>
+       <div style="margin-top: 2rem;">
+           {{ $news->links('vendor.pagination.custom') }}
+       </div>
+    @else
         <div class="empty-state">
             <h2>🎬 Nessuna News Disponibile</h2>
             <p>Le ultime notizie su film e serie TV verranno caricate a breve.</p>
@@ -75,12 +76,9 @@
 </div>
 
 @auth
-@include ('components.modal',['film' =>$item])
-<script src="{{ asset('js/news.js') }}"></script>
-<script src="{{ asset('js/recommended-film-modal.js') }}"></script>
-    
+    @include('components.modal')
+    <script src="{{ asset('js/news.js') }}"></script>
+    <script src="{{ asset('js/recommended-film-modal.js') }}"></script>
     @stack('scripts')
-
-
 @endauth
 @endsection

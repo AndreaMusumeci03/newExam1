@@ -1,4 +1,3 @@
-
 function getCsrfToken() {
     const token = document.querySelector('meta[name="csrf-token"]');
     if (!token) {
@@ -42,34 +41,61 @@ function addToList(newsId) {
     });
 }
 
-function removeFromList(newsId) {
-    if (!confirm('Sei sicuro di voler rimuovere questo film dalla tua lista?')) {
+function removeFromList(id, type, el) {
+    if (!['news','film'].includes(type)) {
+        showAlert('error', 'Tipo non valido.');
+        return;
+    }
+    
+    if (!confirm('Sei sicuro di voler rimuovere questo elemento dalla tua lista?')) return;
+
+    const btn = el || document.querySelector(`[data-remove-id="${id}"][data-remove-type="${type}"]`);
+    if (btn) btn.disabled = true;
+
+    const csrf = getCsrfToken();
+    if (!csrf) {
+        showAlert('error', 'Errore di sicurezza. Ricarica la pagina.');
+        if (btn) btn.disabled = false;
         return;
     }
 
-    fetch(`/my-lists/${newsId}`, {
+    const baseUrl = btn?.getAttribute('data-remove-url-base') || '/my-lists';
+    const url = type === 'film' ? `${baseUrl}/film/${id}` : `${baseUrl}/${id}`;
+
+    fetch(url, {
         method: 'DELETE',
         headers: {
-            'X-CSRF-TOKEN': getCsrfToken(),
+            'X-CSRF-TOKEN': csrf,
             'Accept': 'application/json'
-        }
+        },
+        credentials: 'same-origin'
     })
-    .then(response => response.json())
+    .then(res => {
+        if (!res.ok) {
+            if (res.status === 419) throw new Error('Sessione scaduta. Ricarica la pagina.');
+            throw new Error('HTTP ' + res.status);
+        }
+        const ct = res.headers.get('content-type') || '';
+        return ct.includes('application/json') ? res.json() : { success: true, message: 'Elemento rimosso.' };
+    })
     .then(data => {
-        if (data.success) {
-            showAlert('success', data.message);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
-        } else {
-            showAlert('error', data.message || 'Errore durante la rimozione dalla lista');
+        if (!data.success) throw new Error(data.message || 'Errore');
+        showAlert('success', data.message || 'Elemento rimosso');
+        const card = btn?.closest('[data-item-card]');
+        if (card) {
+            card.style.transition = 'opacity 0.3s';
+            card.style.opacity = '0';
+            setTimeout(() => card.remove(), 300);
         }
     })
-    .catch(error => {
-        console.error('Errore:', error);
-        showAlert('error', 'Errore di connessione');
+    .catch(err => {
+        console.error(err);
+        showAlert('error', err.message || 'Errore durante la rimozione');
+        if (btn) btn.disabled = false;
     });
 }
+
+
 
 
 
