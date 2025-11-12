@@ -7,7 +7,7 @@ function showAddToListModal(id, title, entityType) {
 
     const et = document.getElementById('addToListEntityType');
     const ei = document.getElementById('addToListEntityId');
-    if (et) et.value = entityType; // 'news' | 'film'
+    if (et) et.value = entityType; 
     if (ei) ei.value = id;
 
     modal.style.display = 'flex';
