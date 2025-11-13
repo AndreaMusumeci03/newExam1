@@ -1,25 +1,3 @@
-function showAddToListModal(id, title, entityType) {
-    const modal = document.getElementById('addToListModal');
-    if (!modal) return;
-
-    const titleEl = document.getElementById('addToListModalTitle');
-    if (titleEl) titleEl.textContent = title || 'Elemento';
-
-    const et = document.getElementById('addToListEntityType');
-    const ei = document.getElementById('addToListEntityId');
-    if (et) et.value = entityType; 
-    if (ei) ei.value = id;
-
-    modal.style.display = 'flex';
-}
-
-function closeAddToListModal() {
-    const modal = document.getElementById('addToListModal');
-    const form = document.getElementById('addToListForm');
-    if (modal) modal.style.display = 'none';
-    if (form) form.reset();
-}
-
 function submitAddToListModal(event) {
     event.preventDefault();
 
@@ -71,13 +49,7 @@ function submitAddToListModal(event) {
     });
 }
 
-window.onclick = function(event) {
-    const modal = document.getElementById('addToListModal');
-    if (event.target === modal) {
-        closeAddToListModal();
-    }
-};
 
-window.showAddToListModal = showAddToListModal;
-window.closeAddToListModal = closeAddToListModal;
+
+
 window.submitAddToListModal = submitAddToListModal;

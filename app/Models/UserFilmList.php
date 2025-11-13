@@ -50,7 +50,6 @@ class UserFilmList extends Model
         return $labels[$this->status] ?? 'Sconosciuto';
     }
 
-    // Relazioni
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -66,20 +65,17 @@ class UserFilmList extends Model
         return $this->belongsTo(RecommendedFilm::class);
     }
 
-    // Helper: ottieni il film (news o recommended)
     public function getFilm()
     {
         return $this->news ?? $this->recommendedFilm;
     }
     
-    // Helper: ottieni il titolo
     public function getTitle()
     {
         $film = $this->getFilm();
         return $film ? $film->title : 'Sconosciuto';
     }
     
-    // Helper: ottieni l'immagine
     public function getImageUrl()
     {
         if ($this->news) {
