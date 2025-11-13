@@ -11,7 +11,6 @@ class UserFilmList extends Model
 
     protected $fillable = [
         'user_id',
-        'news_id',
         'recommended_film_id',
         'status',
         'rating',
@@ -55,35 +54,18 @@ class UserFilmList extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function news()
-    {
-        return $this->belongsTo(News::class);
-    }
-
     public function recommendedFilm()
     {
         return $this->belongsTo(RecommendedFilm::class);
     }
 
-    public function getFilm()
-    {
-        return $this->news ?? $this->recommendedFilm;
-    }
-    
     public function getTitle()
     {
-        $film = $this->getFilm();
-        return $film ? $film->title : 'Sconosciuto';
+        return $this->recommendedFilm ? $this->recommendedFilm->title : 'Sconosciuto';
     }
-    
+
     public function getImageUrl()
     {
-        if ($this->news) {
-            return $this->news->image_url;
-        }
-        if ($this->recommendedFilm) {
-            return $this->recommendedFilm->poster_url;
-        }
-        return null;
+        return $this->recommendedFilm ? $this->recommendedFilm->poster_url : null;
     }
 }

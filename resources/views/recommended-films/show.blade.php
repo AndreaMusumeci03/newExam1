@@ -5,7 +5,6 @@
 @section('content')
 <div class="container">
     <div class="film-detail">
-        {{-- Header del Film --}}
         <div class="film-header">
             <h1>{{ $film->title }} @if($film->year)<span style="color: #999;">({{ $film->year }})</span>@endif</h1>
             
@@ -33,9 +32,7 @@
             </div>
         </div>
 
-        {{-- Layout a 2 Colonne --}}
         <div class="film-content-wrapper">
-            {{-- Colonna Sinistra: Poster --}}
             <div class="film-poster-column">
                 @if($film->poster_url)
                     <img src="{{ $film->poster_url }}" alt="{{ $film->title }}" class="film-poster">
@@ -43,43 +40,58 @@
                     <div class="film-poster-placeholder">🎬</div>
                 @endif
 
-                {{-- Pulsante Aggiungi alla Lista (solo per utenti autenticati) --}}
                 @auth
                     <div class="quick-actions" style="margin-top: 1rem;">
-                        @if($userFilmList)
-                            <div class="alert alert-info" style="text-align: center;">
-                                {{ $userFilmList->getStatusEmoji() }} 
-                                <strong>{{ $userFilmList->getStatusLabel() }}</strong>
-                                @if($userFilmList->rating)
-                                    <br><span>⭐ Il tuo voto: {{ $userFilmList->rating }}/10</span>
-                                @endif
-                            </div>
+                        <div class="add-to-list-section" style="width: 100%; margin-bottom: 1rem;">
+                            <h3 style="margin-bottom: 1rem;">📋 Aggiungi alla Tua Lista</h3>
+                            <form id="add-to-list-form" onsubmit="return addToFilmList({{ $film->id }}, this)" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+                                @csrf
+                                <div class="form-group" style="flex: 1; min-width: 200px;">
+                                    <label for="status">Stato</label>
+                                    <select name="status" class="form-control" required>
+                                        <option value="plan_to_watch">📋 Da Vedere</option>
+                                        <option value="watching">▶️ Sto Guardando</option>
+                                        <option value="completed">✅ Completato</option>
+                                        <option value="dropped">❌ Abbandonato</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="width: 150px;">
+                                    <label for="rating">Voto (1-10)</label>
+                                    <input type="number" name="rating" class="form-control" min="1" max="10" placeholder="Opzionale">
+                                </div>
+                                <div class="form-group" style="flex: 2; min-width: 300px;">
+                                    <label for="personal_notes">Note Personali</label>
+                                    <input type="text" name="personal_notes" class="form-control" maxlength="1000" placeholder="Opzionale">
+                                </div>
+                                <button type="submit" class="btn btn-primary">📋 Aggiungi</button>
+                            </form>
+                        </div>
+
+                        @if(!empty($isFavoriteFilm))
                             <button 
-                                onclick="removeFromFilmList({{ $film->id }})" 
+                                onclick="removeFromFavorites({{ $film->id }})" 
                                 class="btn btn-danger btn-block"
                             >
-                                🗑️ Rimuovi dalla Lista
+                                💔 Rimuovi dai Preferiti
                             </button>
                         @else
                             <button 
-                                onclick="showAddToListModal({{ $film->id }}, @json($film->title), 'film')" 
-                                class="btn btn-primary btn-block"
+                                onclick="addToFavorites({{ $film->id }})" 
+                                class="btn btn-success btn-block"
                             >
-                                📋 Aggiungi alla Lista
+                                ❤️ Aggiungi ai Preferiti
                             </button>
                         @endif
                     </div>
                 @else
                     <div class="alert alert-info" style="margin-top: 1rem;">
                         <a href="{{ route('login') }}" style="color: #fff; text-decoration: underline;">Accedi</a> 
-                        per aggiungere questo film alla tua lista!
+                        per aggiungere questo film alla tua lista e ai preferiti!
                     </div>
                 @endauth
             </div>
 
-            {{-- Colonna Destra: Informazioni --}}
             <div class="film-info-column">
-                {{-- Trama --}}
                 @if($film->plot)
                     <div class="film-section">
                         <h3>📖 Trama</h3>
@@ -87,7 +99,6 @@
                     </div>
                 @endif
 
-                {{-- Dettagli --}}
                 <div class="film-section">
                     <h3>ℹ️ Dettagli</h3>
                     <div class="film-details-grid">
@@ -119,20 +130,69 @@
                     </div>
                 </div>
 
-                {{-- Pulsante Torna Indietro --}}
                 <div style="margin-top: 2rem;">
                     <a href="{{ route('recommended-films.index') }}" class="btn btn-secondary">
                         ← Torna ai Film Consigliati
                     </a>
+                </div>
+
+                <div class="comments-section" style="margin-top: 2rem;">
+                    <h3>💬 Commenti ({{ $film->comments->count() }})</h3>
+
+                    @auth
+                        <form onsubmit="return submitFilmComment({{ $film->id }}, this)" style="margin-bottom: 2rem;">
+                            @csrf
+                            <div class="form-group">
+                                <textarea 
+                                    name="content" 
+                                    class="form-control" 
+                                    placeholder="Scrivi il tuo commento..." 
+                                    required
+                                    maxlength="1000"
+                                ></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Invia Commento</button>
+                        </form>
+                    @else
+                        <div class="alert alert-info" style="margin-bottom: 2rem;">
+                            <a href="{{ route('login') }}" style="color: #fff; text-decoration: underline;">Accedi</a> 
+                            per lasciare un commento.
+                        </div>
+                    @endauth
+
+                    @forelse($film->comments as $comment)
+                        <div class="comment">
+                            <div class="comment-header">
+                                <span class="comment-author">{{ $comment->user->name }}</span>
+                                <span class="comment-date">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                            <div class="comment-body">
+                                {{ $comment->content }}
+                            </div>
+                            @if(auth()->check() && auth()->id() === $comment->user_id)
+                                <div class="comment-actions">
+                                    <button 
+                                        onclick="deleteComment({{ $comment->id }})" 
+                                        class="btn btn-danger"
+                                        style="padding: 0.5rem 1rem; font-size: 0.9rem;"
+                                    >
+                                        🗑️ Elimina
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="empty-state" style="padding: 2rem;">
+                            <p>Nessun commento ancora. Sii il primo a commentare!</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-{{-- Modal per Aggiungere alla Lista --}}
 @auth
-@include('components.modal')
-<script src="{{ asset('js/recommended-film-modal.js') }}"></script>
+<script src="{{ asset('js/film.js') }}"></script>
 @endauth
 @endsection

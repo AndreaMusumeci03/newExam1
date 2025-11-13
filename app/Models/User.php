@@ -39,9 +39,10 @@ class User extends Authenticatable
         return $this->hasMany(Favorite::class);
     }
 
-    public function favoriteNews()
+    public function favoriteFilms()
     {
-        return $this->belongsToMany(News::class, 'favorites')->withTimestamps();
+        return $this->belongsToMany(RecommendedFilm::class, 'favorites', 'user_id', 'recommended_film_id')
+            ->withTimestamps();
     }
 
     public function filmLists()
@@ -49,25 +50,21 @@ class User extends Authenticatable
         return $this->hasMany(UserFilmList::class);
     }
 
-    // Film da vedere
     public function planToWatch()
     {
         return $this->filmLists()->where('status', UserFilmList::STATUS_PLAN_TO_WATCH);
     }
 
-    // Film in visione
     public function watching()
     {
         return $this->filmLists()->where('status', UserFilmList::STATUS_WATCHING);
     }
 
-    // Film completati
     public function completed()
     {
         return $this->filmLists()->where('status', UserFilmList::STATUS_COMPLETED);
     }
 
-    // Film abbandonati
     public function dropped()
     {
         return $this->filmLists()->where('status', UserFilmList::STATUS_DROPPED);

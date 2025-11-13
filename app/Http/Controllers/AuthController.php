@@ -43,7 +43,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('news.index')->with('success', 'Registrazione completata con successo!');
+        return redirect()->route('recommended-films.index')->with('success', 'Registrazione completata con successo!');
     }
 
     public function showLogin()
@@ -64,7 +64,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('news.index'))->with('success', 'Login effettuato con successo!');
+            return redirect()->intended(route('recommended-films.index'))->with('success', 'Login effettuato con successo!');
         }
 
         return back()->withErrors([

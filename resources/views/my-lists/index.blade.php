@@ -79,9 +79,7 @@
             <h2>📋 Nessun Film nella Lista</h2>
             <p>Inizia ad aggiungere film e serie TV alle tue liste!</p>
             <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <a href="{{ route('news.index') }}" class="btn btn-primary">
-                    🎬 Esplora Film e Serie
-                </a>
+                
                 <a href="{{ route('recommended-films.index') }}" class="btn btn-secondary">
                     ⭐ Film Consigliati
                 </a>

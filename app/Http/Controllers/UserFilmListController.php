@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
 use App\Models\RecommendedFilm;
 use App\Models\UserFilmList;
 use Illuminate\Http\Request;
 
 class UserFilmListController extends Controller
 {
-
     public function index()
     {
         $user = auth()->user();
@@ -21,19 +19,16 @@ class UserFilmListController extends Controller
             'dropped'       => $user->filmLists()->where('status', UserFilmList::STATUS_DROPPED)->count(),
         ];
 
-
         $allItems = $user->filmLists()
-            ->with(['news', 'recommendedFilm'])
+            ->with(['recommendedFilm'])
             ->latest()
             ->get();
 
         return view('my-lists.index', compact('stats', 'allItems'));
     }
 
-  
     public function show($status)
     {
-        // Valida lo status
         $validStatuses = [
             UserFilmList::STATUS_PLAN_TO_WATCH,
             UserFilmList::STATUS_WATCHING,
@@ -51,40 +46,12 @@ class UserFilmListController extends Controller
         $statusLabel = $statusLabels[$status] ?? 'Lista';
 
         $items = $user->filmLists()
-            ->with(['news', 'recommendedFilm'])
+            ->with(['recommendedFilm'])
             ->where('status', $status)
             ->latest()
             ->paginate(24);
 
         return view('my-lists.show', compact('items', 'status', 'statusLabel'));
-    }
-
-    public function store(Request $request, $newsId)
-    {
-        $data = $this->validatePayload($request);
-
-        $news = News::findOrFail($newsId);
-
-        auth()->user()->filmLists()->updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'news_id' => $news->id,
-            ],
-            [
-                'status' => $data['status'],
-                'rating' => $data['rating'] ?? null,
-                'personal_notes' => $data['personal_notes'] ?? null,
-                'recommended_film_id' => null,
-            ]
-        );
-
-        return $this->respond($request, 'Aggiunto alla lista!');
-    }
-
-    public function destroy(Request $request, $newsId)
-    {
-        $this->deleteBy('news_id', $newsId);
-        return $this->respond($request, 'Rimosso dalla lista!');
     }
 
     public function storeFilm(Request $request, $filmId)
@@ -102,7 +69,6 @@ class UserFilmListController extends Controller
                 'status' => $data['status'],
                 'rating' => $data['rating'] ?? null,
                 'personal_notes' => $data['personal_notes'] ?? null,
-                'news_id' => null,
             ]
         );
 
@@ -111,10 +77,9 @@ class UserFilmListController extends Controller
 
     public function destroyFilm(Request $request, $filmId)
     {
-        $this->deleteBy('recommended_film_id', $filmId);
+        auth()->user()->filmLists()->where('recommended_film_id', $filmId)->delete();
         return $this->respond($request, 'Film rimosso dalla lista!');
     }
-
 
     private function validatePayload(Request $request): array
     {
@@ -134,10 +99,5 @@ class UserFilmListController extends Controller
             ]);
         }
         return back()->with('success', $message);
-    }
-
-    private function deleteBy(string $column, $id): void
-    {
-        auth()->user()->filmLists()->where($column, $id)->delete();
     }
 }

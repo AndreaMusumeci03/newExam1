@@ -8,7 +8,6 @@
         <h1>🎬 Benvenuto su FilmNews</h1>
         <p>Scopri le ultime notizie su film e serie TV</p>
         <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
-            <a href="{{ route('news.index') }}" class="btn btn-primary">Esplora le News</a>
             @guest
                 <a href="{{ route('register') }}" class="btn btn-outline">Registrati Ora</a>
             @endguest

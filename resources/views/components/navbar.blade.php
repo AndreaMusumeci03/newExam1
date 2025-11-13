@@ -4,7 +4,6 @@
         
         <ul class="navbar-menu">
             <li><a href="{{ route('home') }}">Home</a></li>
-            <li><a href="{{ route('news.index') }}">News</a></li>
             <li><a href="{{ route('recommended-films.index') }}">🎥 Film Consigliati</a></li>
             
             @auth

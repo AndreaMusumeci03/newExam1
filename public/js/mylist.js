@@ -1,13 +1,10 @@
-function removeFromList(id, type) {
+function removeFromList(id) {
     if (!confirm('Sei sicuro di voler rimuovere questo elemento dalla tua lista?')) {
         return;
     }
 
-    const url = type === 'news' 
-        ? `/my-lists/${id}` 
-        : `/my-lists/film/${id}`;
-
-    fetch(url, {
+  
+    fetch(`/my-lists/film/${id}`, {
         method: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,

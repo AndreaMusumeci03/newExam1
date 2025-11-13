@@ -2,35 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
+use App\Models\RecommendedFilm;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
     public function index()
     {
-        $favorites = auth()->user()->favoriteNews()
+        $favorites = auth()->user()->favoriteFilms()
             ->orderBy('favorites.created_at', 'desc')
             ->paginate(12);
 
         return view('favorites.index', compact('favorites'));
     }
 
-    public function store(Request $request, $newsId)
+    public function storeFilm(Request $request, $filmId)
     {
-        News::findOrFail($newsId);
+        RecommendedFilm::findOrFail($filmId);
 
-        $result = auth()->user()->favoriteNews()->syncWithoutDetaching([$newsId]);
-
+        $result = $request->user()->favoriteFilms()->syncWithoutDetaching([$filmId]);
         $added = !empty($result['attached']);
         $message = $added ? 'Aggiunto ai preferiti!' : 'Già presente nei preferiti!';
 
         return $this->respond($request, $message, success: $added);
     }
 
-    public function destroy(Request $request, $newsId)
+    public function destroyFilm(Request $request, $filmId)
     {
-        auth()->user()->favoriteNews()->detach($newsId);
+        $request->user()->favoriteFilms()->detach($filmId);
 
         return $this->respond($request, 'Rimosso dai preferiti!');
     }

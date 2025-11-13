@@ -1,16 +1,17 @@
 <div class="news-card" data-item-card>
     @php
-        $film = $item->getFilm();
-        $imageUrl = $item->getImageUrl();
-        $filmId = $item->news_id ?? $item->recommended_film_id;
-        $routeName = $item->news_id ? 'news.show' : 'recommended-films.show';
-        $type = $item->news_id ? 'news' : 'film';
+        // Tutto basato solo sui film consigliati
+        $film = $item->recommendedFilm;
+        $imageUrl = $film?->poster_url;
+        $filmId = $item->recommended_film_id;
+        $routeName = 'recommended-films.show';
+        $type = 'film';
     @endphp
 
     {{-- Immagine --}}
     <a href="{{ route($routeName, $filmId) }}" class="card-image-link">
         @if($imageUrl)
-            <img src="{{ $imageUrl }}" alt="{{ $film->title }}" class="card-image">
+            <img src="{{ $imageUrl }}" alt="{{ $film?->title }}" class="card-image">
         @else
             <div class="card-image-placeholder">🎬</div>
         @endif
@@ -20,7 +21,7 @@
         {{-- Titolo --}}
         <h3 class="card-title">
             <a href="{{ route($routeName, $filmId) }}">
-                {{ $film->title }}
+                {{ $film?->title ?? 'Sconosciuto' }}
             </a>
         </h3>
         

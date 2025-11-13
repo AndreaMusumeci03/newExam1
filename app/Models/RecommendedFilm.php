@@ -33,4 +33,10 @@ class RecommendedFilm extends Model
     {
         return $this->hasMany(UserFilmList::class, 'recommended_film_id');
     }
+
+    // Aggiunta: relazione commenti sul film
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'recommended_film_id');
+    }
 }

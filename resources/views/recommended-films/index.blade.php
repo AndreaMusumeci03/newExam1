@@ -14,35 +14,27 @@
     </div>
 
     @if($films->count() > 0)
-        {{-- Grid di Card --}}
         <div class="news-grid">
             @foreach($films as $film)
                 <div class="film-card" data-item-card>
-                    {{-- Poster --}}
                     <a href="{{ route('recommended-films.show', $film->id) }}" class="card-image-link">
                         @if($film->poster_url)
                             <img src="{{ $film->poster_url }}" alt="{{ $film->title }}" class="card-image">
                         @else
                             <div class="card-image-placeholder">🎬</div>
                         @endif
-                        
-                        {{-- Badge Rating --}}
                         @if($film->imdb_rating)
                             <div class="rating-badge-overlay">
                                 ⭐ {{ $film->imdb_rating }}
                             </div>
                         @endif
                     </a>
-                    
                     <div class="card-content">
-                        {{-- Titolo --}}
                         <h3 class="card-title">
                             <a href="{{ route('recommended-films.show', $film->id) }}">
                                 {{ $film->title }}
                             </a>
                         </h3>
-                        
-                        {{-- Meta Info --}}
                         <div class="card-meta">
                             @if($film->year)
                                 <span>📅 {{ $film->year }}</span>
@@ -51,8 +43,6 @@
                                 <span>⏱️ {{ $film->runtime }}</span>
                             @endif
                         </div>
-
-                        {{-- Genere --}}
                         @if($film->genre)
                             <div class="film-genres">
                                 @foreach(explode(',', $film->genre) as $genre)
@@ -60,35 +50,21 @@
                                 @endforeach
                             </div>
                         @endif
-
-                        {{-- Trama breve --}}
                         @if($film->plot)
                             <p class="card-description">
                                 {{ Str::limit($film->plot, 100) }}
                             </p>
                         @endif
-
-                        {{-- Azioni --}}
                         <div class="card-actions">
                             <a href="{{ route('recommended-films.show', $film->id) }}" class="btn btn-primary btn-sm">
                                 📖 Dettagli
                             </a>
-                            
-                            @auth
-                                <button 
-                                    onclick="showAddToListModal({{ $film->id }}, @json($film->title), 'film')" 
-                                    class="btn btn-secondary btn-sm"
-                                >
-                                    📋 Lista
-                                </button>
-                            @endauth
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
 
-        {{-- Paginazione --}}
         <div style="margin-top: 2rem;">
             {{ $films->links('vendor.pagination.custom') }}
         </div>
@@ -103,11 +79,4 @@
         </div>
     @endif
 </div>
-
-{{-- Modal Veloce per Aggiungere alla Lista --}}
-@auth
-@include('components.modal')
-<script src="{{ asset('js/recommended-film-modal.js') }}"></script>
-@stack('scripts')
-@endauth
 @endsection

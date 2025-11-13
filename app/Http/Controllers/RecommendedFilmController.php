@@ -39,22 +39,27 @@ class RecommendedFilmController extends Controller
 
     public function show($id)
     {
-        $film = RecommendedFilm::findOrFail($id);
+        $film = RecommendedFilm::with(['comments.user'])->findOrFail($id);
 
         $userFilmList = null;
+        $isFavoriteFilm = false;
+
         if (auth()->check()) {
-            $userFilmList = auth()->user()->filmLists()
+            $user = auth()->user();
+
+            $userFilmList = $user->filmLists()
                 ->where('recommended_film_id', $id)
                 ->first();
+
+            $isFavoriteFilm = $user->favoriteFilms()->where('recommended_film_id', $id)->exists();
         }
 
-        return view('recommended-films.show', compact('film', 'userFilmList'));
+        return view('recommended-films.show', compact('film', 'userFilmList', 'isFavoriteFilm'));
     }
 
     private function loadInitialFilms(): void
     {
-        $savedOrUpdated = 0;
-        $maxPages = 5; 
+        $maxPages = 5;
 
         for ($page = 1; $page <= $maxPages; $page++) {
             $data = $this->tmdbService->getTopRatedMovies($page);
@@ -62,9 +67,7 @@ class RecommendedFilmController extends Controller
 
             foreach ($results as $movie) {
                 $tmdbId = $movie['id'] ?? null;
-                if (!$tmdbId) {
-                    continue;
-                }
+                if (!$tmdbId) continue;
 
                 $year = null;
                 if (!empty($movie['release_date'])) {
@@ -87,8 +90,6 @@ class RecommendedFilmController extends Controller
                         'released'    => $movie['release_date'] ?? null,
                     ]
                 );
-
-                $savedOrUpdated++;
             }
             usleep(150000);
         }
@@ -102,14 +103,10 @@ class RecommendedFilmController extends Controller
 
             foreach ($films as $film) {
                 $tmdbId = (int) str_replace('tmdb_', '', (string) $film->imdb_id);
-                if (!$tmdbId) {
-                    continue;
-                }
+                if (!$tmdbId) continue;
 
                 $details = $this->tmdbService->getMovieDetails($tmdbId);
-                if (!$details) {
-                    continue;
-                }
+                if (!$details) continue;
 
                 $director = null;
                 foreach ($details['credits']['crew'] ?? [] as $crew) {

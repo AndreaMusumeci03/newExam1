@@ -3,23 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\RecommendedFilm;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, $newsId)
+    public function storeForFilm(Request $request, $filmId)
     {
         $request->validate([
             'content' => 'required|string|max:1000',
         ]);
 
+        RecommendedFilm::findOrFail($filmId);
+
         Comment::create([
             'user_id' => $request->user()->id,
-            'news_id' => $newsId,
+            'recommended_film_id' => $filmId,
             'content' => $request->content,
         ]);
 
-        return $this->respond($request, 'Commento aggiunto!', route('news.show', $newsId));
+        return $this->respond($request, 'Commento aggiunto!', route('recommended-films.show', $filmId));
     }
 
     public function destroy(Request $request, $id)

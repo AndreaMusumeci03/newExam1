@@ -2,7 +2,6 @@
 function getCsrfToken() {
     const token = document.querySelector('meta[name="csrf-token"]');
     if (!token) {
-        console.error('CSRF token not found');
         return null;
     }
     return token.getAttribute('content');
