@@ -15,18 +15,21 @@ function addToFilmList(filmId, formEl) {
     },
     body: data
   })
-  .then(function (res) {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.headers.get('content-type')?.includes('application/json') ? res.json() : {};
-  })
-  .then(function () {
-    window.location.reload();
-  })
-  .catch(function () {
-    alert("Errore durante l'aggiunta alla lista");
-  });
-
-  // evita submit nativo del form
+  .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante la rimozione');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Impossibile aggiungere alla lista');
+    });
   return false;
 }
 
@@ -39,16 +42,21 @@ function addToFavorites(filmId) {
       'Accept': 'application/json'
     }
   })
-  .then(function (res) {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.headers.get('content-type')?.includes('application/json') ? res.json() : {};
-  })
-  .then(function () {
-    window.location.reload();
-  })
-  .catch(function () {
-    alert("Errore durante l'aggiunta ai preferiti");
-  });
+  .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante la rimozione');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Impossibile aggiungere ai preferiti');
+    });
 }
 
 function removeFromFavorites(filmId) {
@@ -60,16 +68,21 @@ function removeFromFavorites(filmId) {
       'Accept': 'application/json'
     }
   })
-  .then(function (res) {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.headers.get('content-type')?.includes('application/json') ? res.json() : {};
-  })
-  .then(function () {
-    window.location.reload();
-  })
-  .catch(function () {
-    alert('Errore durante la rimozione dai preferiti');
-  });
+  .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante la rimozione');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Impossibile rimuovere dai preferiti');
+    });
 }
 
 function submitFilmComment(filmId, formEl) {
@@ -84,18 +97,21 @@ function submitFilmComment(filmId, formEl) {
     },
     body: data
   })
-  .then(function (res) {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.headers.get('content-type')?.includes('application/json') ? res.json() : {};
-  })
-  .then(function () {
-    window.location.reload();
-  })
-  .catch(function () {
-    alert('Errore durante l\'invio del commento');
-  });
-
-  // evita submit nativo del form
+  .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante la rimozione');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Impossibile inviare il commento');
+    });
   return false;
 }
 
@@ -110,14 +126,19 @@ function deleteComment(commentId) {
       'Accept': 'application/json'
     }
   })
-  .then(function (res) {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.headers.get('content-type')?.includes('application/json') ? res.json() : {};
-  })
-  .then(function () {
-    window.location.reload();
-  })
-  .catch(function () {
-    alert('Errore durante l\'eliminazione del commento');
-  });
+  .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.message || 'Errore durante la rimozione');
+        }
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        showAlert('error', 'Errore di connessione');
+    });
 }
