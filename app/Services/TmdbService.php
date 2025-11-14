@@ -47,16 +47,7 @@ class TmdbService
         ]);
     }
 
-    public function getPopularMovies(int $page = 1): array
-    {
-        return $this->get('/movie/popular', ['page' => $page]);
-    }
-
-    public function getPopularTVShows(int $page = 1): array
-    {
-        return $this->get('/tv/popular', ['page' => $page]);
-    }
-
+    
     public function getImageUrl(?string $path, string $size = 'w500'): ?string
     {
         if (!$path) {

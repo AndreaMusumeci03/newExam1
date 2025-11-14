@@ -17,20 +17,30 @@ class UserFilmList extends Model
         'personal_notes',
     ];
 
+
     public const STATUS_PLAN_TO_WATCH = 'plan_to_watch';
     public const STATUS_WATCHING = 'watching';
     public const STATUS_COMPLETED = 'completed';
     public const STATUS_DROPPED = 'dropped';
+    
+    public const ALL_STATUSES = [
+        self::STATUS_PLAN_TO_WATCH => '📋 Da Vedere',
+        self::STATUS_WATCHING => '▶️ Sto Guardando',
+        self::STATUS_COMPLETED => '✅ Completato',
+        self::STATUS_DROPPED => '❌ Abbandonato',
+    ];
 
     public static function getStatusLabels()
     {
-        return [
-            self::STATUS_PLAN_TO_WATCH => '📋 Da Vedere',
-            self::STATUS_WATCHING => '▶️ Sto Guardando',
-            self::STATUS_COMPLETED => '✅ Completato',
-            self::STATUS_DROPPED => '❌ Abbandonato',
-        ];
+        return self::ALL_STATUSES;
     }
+    
+ 
+    public static function getStatusValues(): array
+    {
+        return array_keys(self::ALL_STATUSES);
+    }
+    
 
     public function getStatusEmoji()
     {
@@ -45,8 +55,7 @@ class UserFilmList extends Model
 
     public function getStatusLabel()
     {
-        $labels = self::getStatusLabels();
-        return $labels[$this->status] ?? 'Sconosciuto';
+        return self::ALL_STATUSES[$this->status] ?? 'Sconosciuto';
     }
 
     public function user()
