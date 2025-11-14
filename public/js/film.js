@@ -19,9 +19,7 @@ function addToFilmList(filmId, formEl) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+            formEl.reset();
         } else {
             showAlert('error', data.message || 'Errore durante la rimozione');
         }
@@ -30,10 +28,13 @@ function addToFilmList(filmId, formEl) {
         console.error('Errore:', error);
         showAlert('error', 'Impossibile aggiungere alla lista');
     });
-  return false;
 }
 
-function addToFavorites(filmId) {
+function addToFavorites(filmId, btn) {
+  if (!btn) {
+    btn = event ? event.target : null;
+  }
+  
   return fetch('/favorites/film/' + filmId, {
     method: 'POST',
     headers: {
@@ -46,11 +47,14 @@ function addToFavorites(filmId) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+    
+            if (btn) {
+                btn.textContent = '💔 Rimuovi dai Preferiti';
+                btn.className = 'btn btn-danger btn-block';
+                btn.setAttribute('onclick', 'removeFromFavorites(' + filmId + ', this)');
+            }
         } else {
-            showAlert('error', data.message || 'Errore durante la rimozione');
+            showAlert('info', data.message || 'Operazione non riuscita');
         }
     })
     .catch(error => {
@@ -59,7 +63,11 @@ function addToFavorites(filmId) {
     });
 }
 
-function removeFromFavorites(filmId) {
+function removeFromFavorites(filmId, btn) {
+  if (!btn) {
+    btn = event ? event.target : null;
+  }
+  
   return fetch('/favorites/film/' + filmId, {
     method: 'DELETE',
     headers: {
@@ -72,9 +80,26 @@ function removeFromFavorites(filmId) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+            
+            if (!btn) return;
+            
+            var card = btn.closest('.news-card, .film-card');
+            if (card && window.location.pathname.includes('/favorites')) {
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    card.remove();
+                    var remainingCards = document.querySelectorAll('.news-card, .film-card');
+                    if (remainingCards.length === 0) {
+                        location.reload();
+                    }
+                }, 300);
+            } else {
+                btn.textContent = '❤️ Aggiungi ai Preferiti';
+                btn.className = 'btn btn-success btn-block';
+                btn.setAttribute('onclick', 'addToFavorites(' + filmId + ', this)');
+            }
         } else {
             showAlert('error', data.message || 'Errore durante la rimozione');
         }
@@ -115,8 +140,12 @@ function submitFilmComment(filmId, formEl) {
   return false;
 }
 
-function deleteComment(commentId) {
+function deleteComment(commentId, btn) {
   if (!confirm('Eliminare questo commento?')) return;
+
+  if (!btn) {
+    btn = event ? event.target : null;
+  }
 
   return fetch('/comments/' + commentId, {
     method: 'DELETE',
@@ -130,9 +159,23 @@ function deleteComment(commentId) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+            
+            if (!btn) return;
+            
+            var comment = btn.closest('.comment');
+            if (comment) {
+                comment.style.transition = 'opacity 0.3s, transform 0.3s';
+                comment.style.opacity = '0';
+                comment.style.transform = 'translateX(-20px)';
+                setTimeout(() => {
+                    comment.remove();
+                    var counter = document.querySelector('.comments-section h3');
+                    if (counter) {
+                        var currentCount = parseInt(counter.textContent.match(/\d+/)[0]);
+                        counter.textContent = '💬 Commenti (' + (currentCount - 1) + ')';
+                    }
+                }, 300);
+            }
         } else {
             showAlert('error', data.message || 'Errore durante la rimozione');
         }

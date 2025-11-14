@@ -1,6 +1,6 @@
 <nav class="navbar">
     <div class="container">
-        <a href="{{ route('home') }}" class="navbar-brand">🎬 FilmNews</a>
+        <a href="{{ route('home') }}" class="navbar-brand">🎬 FilmLists</a>
         
         <ul class="navbar-menu">
             <li><a href="{{ route('home') }}">Home</a></li>

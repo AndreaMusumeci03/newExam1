@@ -44,7 +44,7 @@
                     <div class="quick-actions" style="margin-top: 1rem;">
                         <div class="add-to-list-section" style="width: 100%; margin-bottom: 1rem;">
                             <h3 style="margin-bottom: 1rem;">📋 Aggiungi alla Tua Lista</h3>
-                            <form id="add-to-list-form" onsubmit="return addToFilmList({{ $film->id }}, this)" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+                            <form id="add-to-list-form" onsubmit="event.preventDefault(); addToFilmList({{ $film->id }}, this)" >
                                 @csrf
                                 <div class="form-group" style="flex: 1; min-width: 200px;">
                                     <label for="status">Stato</label>
@@ -69,14 +69,14 @@
 
                         @if(!empty($isFavoriteFilm))
                             <button 
-                                onclick="removeFromFavorites({{ $film->id }})" 
+                                onclick="removeFromFavorites({{ $film->id }}, this)" 
                                 class="btn btn-danger btn-block"
                             >
                                 💔 Rimuovi dai Preferiti
                             </button>
                         @else
                             <button 
-                                onclick="addToFavorites({{ $film->id }})" 
+                                onclick="addToFavorites({{ $film->id }}, this)" 
                                 class="btn btn-success btn-block"
                             >
                                 ❤️ Aggiungi ai Preferiti
@@ -161,26 +161,7 @@
                     @endauth
 
                     @forelse($film->comments as $comment)
-                        <div class="comment">
-                            <div class="comment-header">
-                                <span class="comment-author">{{ $comment->user->name }}</span>
-                                <span class="comment-date">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
-                            </div>
-                            <div class="comment-body">
-                                {{ $comment->content }}
-                            </div>
-                            @if(auth()->check() && auth()->id() === $comment->user_id)
-                                <div class="comment-actions">
-                                    <button 
-                                        onclick="deleteComment({{ $comment->id }})" 
-                                        class="btn btn-danger"
-                                        style="padding: 0.5rem 1rem; font-size: 0.9rem;"
-                                    >
-                                        🗑️ Elimina
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
+                        @include('recommended-films.partials.comment', ['comment' => $comment])
                     @empty
                         <div class="empty-state" style="padding: 2rem;">
                             <p>Nessun commento ancora. Sii il primo a commentare!</p>
