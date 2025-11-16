@@ -14,7 +14,7 @@
     {{-- Statistiche --}}
     <div class="stat-grid">
         {{-- Da Vedere --}}
-        <div class="stat-card">
+        <div class="stat-card" style="margin-left: 2.3vw;">
             <div class="stat-left">
                 <div class="stat-number">{{ $stats['plan_to_watch'] }}</div>
                 <div class="stat-label">📋 Da Vedere</div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RecommendedFilmController;
 use App\Http\Controllers\UserFilmListController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Home
@@ -38,8 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-lists/{status}', [UserFilmListController::class, 'show'])->name('my-lists.show');
     Route::post('/my-lists/film/{filmId}', [UserFilmListController::class, 'storeFilm'])->name('my-lists.store-film');
     Route::delete('/my-lists/film/{filmId}', [UserFilmListController::class, 'destroyFilm'])->name('my-lists.destroy-film');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-// Route per caricare i dettagli completi dei film in background
-Route::get('/films/load-details', [RecommendedFilmController::class, 'loadFullDetails'])
-    ->name('films.load-details');

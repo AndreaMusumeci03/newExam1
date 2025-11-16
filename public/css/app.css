@@ -694,8 +694,9 @@ textarea.form-control {
 }
 
 .stat-card {
+    margin-left: 1vw;
     flex: 0 0 15rem;
-    min-width: 13.75rem;
+    min-width: 17.75rem;
     background: linear-gradient(135deg, #000 0%, #141414 100%);
     border: 0.125rem solid #111;
     border-radius: 0.875rem;
@@ -831,3 +832,58 @@ textarea.form-control {
     max-width: 100%;
   }
 }
+
+.hero {
+        text-align: center;
+        padding: 4rem 1rem;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(https://picsum.photos/1200/400?blur=5&random=1);
+        background-size: cover;
+        background-position: center;
+        border-radius: 0.9375rem;
+        margin-top: 1rem;
+    }
+    .hero h1 {
+        font-size: 3rem;
+        color: #fff;
+        font-weight: 700;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    }
+    .hero p {
+        font-size: 1.25rem;
+        color: #ddd;
+        margin-top: 0.5rem;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 3rem;
+    }
+    .feature-card {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        border-radius: 0.9375rem;
+        padding: 2rem;
+        border: 1px solid #333;
+        transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: #e50914;
+    }
+    .feature-card h3 {
+        color: #e50914;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }

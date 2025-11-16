@@ -64,6 +64,13 @@ function addToFavorites(filmId, btn) {
 }
 
 function removeFromFavorites(filmId, btn) {
+
+  if(window.location.pathname.includes('/favorites')){
+    if (!confirm('Sei sicuro di voler rimuovere questo film dai tuoi preferiti?')) {
+        return;
+    }
+  }
+
   if (!btn) {
     btn = event ? event.target : null;
   }
