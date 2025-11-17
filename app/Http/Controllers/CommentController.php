@@ -22,8 +22,16 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return $this->respond($request, 'Commento aggiunto!', route('recommended-films.show', $filmId));
-    }
+// 4. Renderizzazione del partial Blade in una stringa HTML
+    // Assicurati che il percorso 'recommended-films.partials.comment' sia corretto
+    $html = view('recommended-films.partials.comment', ['comment' => $comment])->render();
+
+    // 5. Risposta JSON con l'HTML incluso
+    return response()->json([
+        'success' => true,
+        'message' => 'Commento aggiunto!',
+        'html' => $html // Qui inviamo il pezzo di HTML pronto
+    ]);    }
 
     public function destroy(Request $request, $id)
     {

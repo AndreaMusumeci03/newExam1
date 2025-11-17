@@ -133,9 +133,27 @@ function submitFilmComment(filmId, formEl) {
     .then(data => {
         if (data.success) {
             showAlert('success', data.message);
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+              const commentsSection = document.querySelector('.comments-section');
+
+          // 2. Rimuovi il messaggio "Nessun commento" se esiste (la classe .empty-state)
+          const emptyState = commentsSection.querySelector('.empty-state');
+          if (emptyState) {
+              emptyState.remove();
+          }
+
+          // 3. Inserisci il nuovo HTML alla fine del contenitore (dopo il form, prima della fine)
+          // Nota: Potresti dover aggiungere un <div id="comments-list"> nel tuo blade per facilitare l'inserimento
+          // Oppure inserirlo prima della fine della section:
+          commentsSection.insertAdjacentHTML('beforeend', data.html);
+
+          // 4. Aggiorna il contatore (opzionale ma carino)
+          const counter = commentsSection.querySelector('h3');
+          if (counter) {
+              let currentCount = parseInt(counter.innerText.match(/\d+/)[0]);
+              counter.innerText = `💬 Commenti (${currentCount + 1})`;
+          }
+
+          formEl.reset(); // Pulisci il form
         } else {
             showAlert('error', data.message || 'Errore durante la rimozione');
         }
@@ -144,7 +162,6 @@ function submitFilmComment(filmId, formEl) {
         console.error('Errore:', error);
         showAlert('error', 'Impossibile inviare il commento');
     });
-  return false;
 }
 
 function deleteComment(commentId, btn) {

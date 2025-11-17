@@ -5,23 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage; // <-- Aggiungi questo
-use Illuminate\Validation\Rules\File;   // <-- Aggiungi questo
+use Illuminate\Support\Facades\Storage; 
+use Illuminate\Validation\Rules\File;   
 
 class ProfileController extends Controller
 {
-    /**
-     * Mostra il form per modificare il profilo.
-     */
     public function edit()
     {
         $user = Auth::user();
         return view('profile.edit', compact('user'));
     }
-
-    /**
-     * Aggiorna il profilo dell'utente.
-     */
+ 
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -37,7 +31,6 @@ class ProfileController extends Controller
             ],
             'bio' => 'nullable|string|max:1000',
             
-            // --- ECCO LA CORREZIONE ---
             'avatar' => [
                 'nullable',
                 'image', 
