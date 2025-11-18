@@ -16,22 +16,22 @@ class CommentController extends Controller
 
         RecommendedFilm::findOrFail($filmId);
 
-        Comment::create([
+        $comment = Comment::create([
             'user_id' => $request->user()->id,
             'recommended_film_id' => $filmId,
             'content' => $request->content,
         ]);
 
-// 4. Renderizzazione del partial Blade in una stringa HTML
-    // Assicurati che il percorso 'recommended-films.partials.comment' sia corretto
-    $html = view('recommended-films.partials.comment', ['comment' => $comment])->render();
+        $comment->load('user');
+       
+        $html = view('recommended-films.partials.comment', ['comment' => $comment])->render();
 
-    // 5. Risposta JSON con l'HTML incluso
-    return response()->json([
-        'success' => true,
-        'message' => 'Commento aggiunto!',
-        'html' => $html // Qui inviamo il pezzo di HTML pronto
-    ]);    }
+        return response()->json([
+            'success' => true,
+            'message' => 'Commento aggiunto!',
+            'html' => $html 
+        ]);    
+    }
 
     public function destroy(Request $request, $id)
     {

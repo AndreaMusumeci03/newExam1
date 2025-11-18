@@ -90,14 +90,14 @@ function removeFromFavorites(filmId, btn) {
             
             if (!btn) return;
             
-            var card = btn.closest('.news-card, .film-card');
+            var card = btn.closest('.film-card');
             if (card && window.location.pathname.includes('/favorites')) {
                 card.style.transition = 'opacity 0.3s, transform 0.3s';
                 card.style.opacity = '0';
                 card.style.transform = 'scale(0.9)';
                 setTimeout(() => {
                     card.remove();
-                    var remainingCards = document.querySelectorAll('.news-card, .film-card');
+                    var remainingCards = document.querySelectorAll('.film-card');
                     if (remainingCards.length === 0) {
                         location.reload();
                     }
@@ -120,7 +120,7 @@ function removeFromFavorites(filmId, btn) {
 function submitFilmComment(filmId, formEl) {
   var data = new FormData(formEl);
 
-  return fetch('/films/' + filmId + '/comments', {
+   fetch('/films/' + filmId + '/comments', {
     method: 'POST',
     headers: {
       'X-CSRF-TOKEN': getCsrfToken(),
@@ -134,34 +134,30 @@ function submitFilmComment(filmId, formEl) {
         if (data.success) {
             showAlert('success', data.message);
               const commentsSection = document.querySelector('.comments-section');
+          
+            const emptyState = commentsSection.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
 
-          // 2. Rimuovi il messaggio "Nessun commento" se esiste (la classe .empty-state)
-          const emptyState = commentsSection.querySelector('.empty-state');
-          if (emptyState) {
-              emptyState.remove();
+            commentsSection.insertAdjacentHTML('beforeend', data.html);
+
+            const counter = commentsSection.querySelector('h3');
+            if (counter) {
+                let currentCount = parseInt(counter.innerText.match(/\d+/)[0]);
+                counter.innerText = `💬 Commenti (${currentCount + 1})`;
+            }
+
+            formEl.reset(); 
+          } else {
+              showAlert('error', data.message || 'Errore durante la rimozione');
           }
-
-          // 3. Inserisci il nuovo HTML alla fine del contenitore (dopo il form, prima della fine)
-          // Nota: Potresti dover aggiungere un <div id="comments-list"> nel tuo blade per facilitare l'inserimento
-          // Oppure inserirlo prima della fine della section:
-          commentsSection.insertAdjacentHTML('beforeend', data.html);
-
-          // 4. Aggiorna il contatore (opzionale ma carino)
-          const counter = commentsSection.querySelector('h3');
-          if (counter) {
-              let currentCount = parseInt(counter.innerText.match(/\d+/)[0]);
-              counter.innerText = `💬 Commenti (${currentCount + 1})`;
-          }
-
-          formEl.reset(); // Pulisci il form
-        } else {
-            showAlert('error', data.message || 'Errore durante la rimozione');
-        }
     })
     .catch(error => {
         console.error('Errore:', error);
         showAlert('error', 'Impossibile inviare il commento');
     });
+    return false;
 }
 
 function deleteComment(commentId, btn) {

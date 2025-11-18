@@ -10,7 +10,7 @@
                 ← Torna alle Liste
             </a>
             <h1 class="page-title">{{ $statusLabel }}</h1>
-            <p style="color: #999; margin-top: 0.5rem;">
+            <p style="color: #999; margin-top: 0.5rem;" class="item-count">
                 {{ $items->total() }} elementi in questa lista
             </p>
         </div>
@@ -23,9 +23,8 @@
             @endforeach
         </div>
 
-        {{-- Paginazione --}}
         <div style="margin-top: 2rem;">
-            {{ $items->links() }}
+            {{ $items->links('vendor.pagination.custom') }}
         </div>
     @else
         <div class="empty-state">
@@ -43,6 +42,5 @@
     @endif
 </div>
 
-{{-- Script per Rimuovere dalla Lista --}}
-
+<script src="{{ asset('js/mylist.js') }}"></script>
 @endsection
